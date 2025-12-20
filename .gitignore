@@ -1,0 +1,11 @@
+_deps/
+.cache/
+CMakeFiles/
+build/
+Makefile
+.DS_Store
+CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+cmake_install.cmake
+
