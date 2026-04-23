@@ -52,12 +52,6 @@ function(include_dependency libName gitUrl gitTag)
   FetchContent_MakeAvailable(${libName})
 endFunction()
 
-set(LIB1 raylib)
-find_package(${LIB1} QUIET)
-if (NOT ${LIB1}_FOUND)
-  include_dependency(${LIB1} https://github.com/raysan5/raylib.git 5.0)
-endif()
-
 set(LIB2 entt)
 find_package(${LIB2} QUIET)
 if (NOT ${LIB2}_FOUND)
@@ -89,7 +83,6 @@ add_dependencies(Sim MetalShaders)
 
 
 target_include_directories(Sim PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes)
-target_include_directories(Sim PRIVATE ${raylib_INCLUDE_DIRS})
 target_include_directories(Sim PRIVATE ${metal_cpp_SOURCE_DIR})
 target_include_directories(Sim PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs/imgui)
 
