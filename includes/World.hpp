@@ -1,21 +1,26 @@
 #pragma once
 
+
+# include <vector>
+# include <iostream>
+
 // # include "entt/entt.hpp"
 
-# include "InfoWindow/InfoWindow.hpp"
 # include "DisplayWindow/DisplayWindow.hpp"
 
-class Scene {
+# include "SharedStructs.h"
+
+
+class World {
 
 public:
-	Scene();
-	~Scene();
+	World();
+	~World();
+
+	std::vector<Vec3>	vertices;
 
 	void run();
 	
 private:
-	SDL_Event		event;
-
-	InfoWindow		infoWindow;
 	DisplayWindow	displayWindow;
 };

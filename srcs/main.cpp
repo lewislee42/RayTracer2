@@ -1,8 +1,9 @@
-# include "Scene.hpp"
+# include "World.hpp"
 
 int main(void) {
-	Scene scene;
+	World world;
 
-	scene.run();
+	world.run();
+
 	return 0;
 }
