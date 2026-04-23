@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 4.1)
 
 project(Sim C CXX OBJC)
 
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -11,6 +12,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 set(METAL_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/default.metallib)
+
 
 add_custom_command(
   OUTPUT ${METAL_LIBRARY}
@@ -22,6 +24,7 @@ add_custom_command(
   COMMENT "Compiling Metal shaders for ${CMAKE_SYSTEM_NAME}"
 )
 
+
 # Source files
 set(SOURCES 
   ./srcs/main.cpp
@@ -29,6 +32,7 @@ set(SOURCES
   ./srcs/DisplayWindow/DisplayWindow.cpp
   ./srcs/Shaders/raytracer.metal
 )
+
 
 set(IMGUI_SOURCES
   ./libs/imgui/imgui.cpp
