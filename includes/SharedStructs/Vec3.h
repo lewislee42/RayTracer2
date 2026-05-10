@@ -161,6 +161,12 @@ public:
 	}
 # endif
 
+
+inline Vec3 normalize(Vec3 v) {
+    float len = v.length();
+    return (Vec3){v.x() / len, v.y() / len, v.z() / len};
+}
+
 // point3 is just an alias for vec3, but useful for geometric clarity in the code.
 using point3 = Vec3;
 

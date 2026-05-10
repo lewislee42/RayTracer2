@@ -18,7 +18,7 @@ public:
 	World();
 	~World();
 
-	std::vector<Vec3>	vertices;
+	std::vector<Triangle>	triangles;
 
 	void run();
 	

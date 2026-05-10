@@ -5,13 +5,17 @@ DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
 	screenWidth(screenWidth),
 	screenHeight(screenHeight)
 {
-
-	// Use SDL window creation and input handling
+	/*
+	 * 	Initializes SDL
+	 */
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
 		throw SDLInitializationError();
 	}
 
+	/*
+	 *  Initializes SDL window and renderer
+	 */
 	if (!SDL_CreateWindowAndRenderer(
 			"Viewport Display", 
 			this->screenWidth, 
@@ -24,18 +28,20 @@ DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
 		throw SDLInitializationError();
 	}
 
-	// Initialize GPU Device for compute shader
+	/*
+	 *  Initializes SDL GPU device for shader compilation & communication
+	 */
 	this->device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_METALLIB, true, NULL);
 	if (!SDL_ClaimWindowForGPUDevice(device, window)) {
 		SDL_Log("GPU Claim window failed: %s", SDL_GetError());
 		throw SDLInitializationError();
 	}
 
-
-	// Compiling shader code to create a compute pipeline
+	/*
+	 *  Compiles shader and loads it as a pipeline
+	 */
 	size_t shaderSize;
-	void* shaderCode = SDL_LoadFile("default.metallib", &shaderSize);
-
+	void* shaderCode = SDL_LoadFile("/Users/lewislee/Documents/Coding/graphicProjects/blackhole-sim/default.metallib", &shaderSize);
 	if (!shaderCode) {
 		SDL_Log("Failed to load shader: %s", SDL_GetError());
 	}
@@ -45,15 +51,16 @@ DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
 		.entrypoint = "computeMain",
 		.format = SDL_GPU_SHADERFORMAT_METALLIB,
 		.num_readwrite_storage_textures = 1,
-		.num_readwrite_storage_buffers = 1,
-		.threadcount_x = 64, // have to get kernal local size
-		.threadcount_y = 1,
+		.num_readwrite_storage_buffers = 2,
+		.threadcount_x = 16,
+		.threadcount_y = 16,
 		.threadcount_z = 1
 	};
-	
 	this->pipeline = SDL_CreateGPUComputePipeline(this->device, &pipelineInfo);
 
-	// Creating texture to render to screen
+	/*
+	 *  Creates texture to render for the screen
+	 */
 	SDL_GPUTextureCreateInfo texInfo = {
 		.type = SDL_GPU_TEXTURETYPE_2D,
 		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, // Standard 32-bit color
@@ -65,7 +72,9 @@ DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
 	};
 	this->screenTexture = SDL_CreateGPUTexture(device, &texInfo);
 
-	// Setup time for FPS counter
+	/*
+	 *  Initializes time for getting fps
+	 */
 	this->lastTime = std::chrono::high_resolution_clock::now();
 }
 
@@ -120,7 +129,7 @@ void DisplayWindow::sendComputeCommand() {
 		bufferBinds.push_back(
 			{
 				.buffer = this->buffers[i],
-				.cycle = true
+				.cycle =false 
 			}
 		);
 	}
@@ -130,8 +139,9 @@ void DisplayWindow::sendComputeCommand() {
 		&writeOp, // texture buffer
 		1, // amount of texture buffers
 		bufferBinds.data(),
-		this->buffers.size()
+		bufferBinds.size()
 	);
+
 
 	SDL_BindGPUComputePipeline(pass, pipeline);
 	SDL_DispatchGPUCompute(pass, this->screenWidth, this->screenHeight, 1);
