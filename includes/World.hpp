@@ -7,8 +7,9 @@
 // # include "entt/entt.hpp"
 
 # include "DisplayWindow/DisplayWindow.hpp"
+# include "Camera.hpp"
 
-# include "SharedStructs.h"
+# include "SharedStructs/SharedStructs.h"
 
 
 class World {
@@ -23,4 +24,5 @@ public:
 	
 private:
 	DisplayWindow	displayWindow;
+	Camera			camera;
 };

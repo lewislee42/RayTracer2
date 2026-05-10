@@ -5,5 +5,6 @@ int main(void) {
 
 	world.run();
 
+	std::cout << "Exiting program." << std::endl;
 	return 0;
 }

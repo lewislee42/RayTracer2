@@ -8,7 +8,7 @@
 # include <chrono>
 # include <stdexcept>
 
-# include "SharedStructs.h"
+# include "SharedStructs/SharedStructs.h"
 
 class DisplayWindow {
 public:
@@ -20,9 +20,11 @@ public:
 	uint	fps = 0;
 
 
-	void	render(const std::vector<Vec3>& vertices);
+	void	render();
 	bool	shouldClose();
-	void	createVertexBuffer(const std::vector<Vec3>& vertices);
+
+	Uint32	createBuffer(void* data, size_t elementAmount, size_t elementSize);
+	void	updateBuffer(Uint32 bufferIndex, void* data, size_t elementAmount, size_t elementSize);
 
 	class SDLInitializationError: public std::exception {
 		public:
@@ -30,8 +32,9 @@ public:
 	};
 
 private:
-	Uint32 screenWidth;
-	Uint32 screenHeight;
+	Uint32	screenWidth;
+	Uint32	screenHeight;
+	Uint32	bufferAmount = 0;
 
 	uint 											frameCount = 0;
 	std::chrono::high_resolution_clock::time_point	lastTime;
@@ -41,9 +44,8 @@ private:
 	SDL_GPUDevice*			device;
 	SDL_GPUComputePipeline*	pipeline;
 
-	SDL_GPUTransferBuffer*	transferBuffer = nullptr;
-	SDL_GPUBuffer*			vertexBuffer = nullptr;
-	SDL_GPUTexture*			screenTexture = nullptr;
+	std::vector<SDL_GPUBuffer*>	buffers;
+	SDL_GPUTexture*				screenTexture = nullptr;
 
 	SDL_Event				event;
 	

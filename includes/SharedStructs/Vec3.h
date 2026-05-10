@@ -1,7 +1,5 @@
-
-
-#ifndef SHARED_STRUCTS_H
-# define SHARED_STRUCTS_H
+#ifndef VEC_THREE_H
+# define VEC_THREE_H
 
 # ifndef SHADER_PROGRAM
 	# include <cmath>
@@ -10,8 +8,9 @@
 
 
 struct Vec3 {
+public:
 	float e[3];
-	
+
 	Vec3(): e{0.0f, 0.0f, 0.0f} {};
 	Vec3(float x, float y, float z): e{x, y, z} {}
 
@@ -76,9 +75,6 @@ struct Vec3 {
 	# endif
 };
 
-// point3 is just an alias for vec3, but useful for geometric clarity in the code.
-using point3 = Vec3;
-
 # ifdef SHADER_PROGRAM
 	inline Vec3 operator+(thread const Vec3 u, thread const Vec3 v) {
 		return Vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
@@ -97,22 +93,22 @@ using point3 = Vec3;
 	}
 
 	inline Vec3 operator*(thread const Vec3 v, float t) {
-		return t * v
+		return t * v;
 	}
 
 	inline Vec3 operator/(thread const Vec3 v, float t) {
 		return (1 / t) * v;
 	}
 
-	inline float dot(thread const Vec3 u, thread const v) {
-		return u.e[0] * v.e[0]
-			 + u.e[1] * v.e[1]
+	inline float dot(thread const Vec3 u, thread const Vec3 v) {
+		return u.e[0] * v.e[0] \
+			 + u.e[1] * v.e[1] \
 			 + u.e[2] * v.e[2];
 	}
 
 	inline Vec3 cross(thread const Vec3 u, thread const Vec3 v) {
-		return Vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-					u.e[2] * v.e[0] - u.e[0] * v.e[2],
+		return Vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1], \
+					u.e[2] * v.e[0] - u.e[0] * v.e[2], \
 					u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 	}
 
@@ -149,8 +145,8 @@ using point3 = Vec3;
 	}
 
 	inline double dot(const Vec3& u, const Vec3& v) {
-		return u.e[0] * v.e[0]
-			 + u.e[1] * v.e[1]
+		return u.e[0] * v.e[0] \
+			 + u.e[1] * v.e[1] \
 			 + u.e[2] * v.e[2];
 	}
 
@@ -164,5 +160,8 @@ using point3 = Vec3;
 		return v / v.length();
 	}
 # endif
+
+// point3 is just an alias for vec3, but useful for geometric clarity in the code.
+using point3 = Vec3;
 
 #endif

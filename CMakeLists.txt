@@ -17,9 +17,14 @@ set(METAL_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/default.metallib)
 add_custom_command(
   OUTPUT ${METAL_LIBRARY}
   # 1. Compile .metal to intermediate .air file
-  COMMAND xcrun -sdk macosx metal -c ${CMAKE_CURRENT_SOURCE_DIR}/srcs//Shaders/raytracer.metal -o ${CMAKE_CURRENT_BINARY_DIR}/Shaders.air
+  COMMAND xcrun -sdk macosx metal 
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/includes
+    -c ${CMAKE_CURRENT_SOURCE_DIR}/srcs/Shaders/raytracer.metal
+    -o ${CMAKE_CURRENT_BINARY_DIR}/Shaders.air
   # 2. Link .air to final .metallib
-  COMMAND xcrun -sdk macosx metallib ${CMAKE_CURRENT_BINARY_DIR}/Shaders.air -o ${METAL_LIBRARY}
+  COMMAND xcrun -sdk macosx metallib 
+    ${CMAKE_CURRENT_BINARY_DIR}/Shaders.air
+    -o ${METAL_LIBRARY}
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/srcs/Shaders/raytracer.metal
   COMMENT "Compiling Metal shaders for ${CMAKE_SYSTEM_NAME}"
 )
@@ -30,6 +35,7 @@ set(SOURCES
   ./srcs/main.cpp
   ./srcs/World.cpp
   ./srcs/DisplayWindow/DisplayWindow.cpp
+  ./srcs/Camera.cpp
   ./srcs/Shaders/raytracer.metal
 )
 
