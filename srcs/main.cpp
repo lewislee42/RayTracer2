@@ -1,9 +1,9 @@
-# include "World.hpp"
+# include "Engine.hpp"
 
 int main(void) {
-	World world;
+	Engine Engine;
 
-	world.run();
+	Engine.run();
 
 	std::cout << "Exiting program." << std::endl;
 	return 0;

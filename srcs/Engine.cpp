@@ -1,14 +1,14 @@
-# include "World.hpp"
+# include "Engine.hpp"
 
-World::World(): displayWindow(800, 600), camera(800, 600) {
+Engine::Engine(): displayWindow(800, 600), camera(800, 600) {
 	this->triangles = {{{0.0f, 0.5f, -1.0f}, {-0.5f, -0.25f, -1.0f}, {0.5f, -0.25f, -2.0f}}};
 }
 
-World::~World() {
+Engine::~Engine() {
 
 }
 
-void World::run() {
+void Engine::run() {
 	std::cout << "Starting render loop." << std::endl;
 
 

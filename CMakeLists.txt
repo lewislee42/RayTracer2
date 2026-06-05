@@ -33,7 +33,7 @@ add_custom_command(
 # Source files
 set(SOURCES 
   ./srcs/main.cpp
-  ./srcs/World.cpp
+  ./srcs/Engine.cpp
   ./srcs/DisplayWindow/DisplayWindow.cpp
   ./srcs/Camera.cpp
   ./srcs/Shaders/raytracer.metal

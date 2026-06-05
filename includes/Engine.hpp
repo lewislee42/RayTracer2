@@ -12,11 +12,11 @@
 # include "SharedStructs/SharedStructs.h"
 
 
-class World {
+class Engine {
 
 public:
-	World();
-	~World();
+	Engine();
+	~Engine();
 
 	std::vector<Triangle>	triangles;
 
