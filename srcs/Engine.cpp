@@ -14,7 +14,6 @@ void Engine::run() {
 
 	CameraMetadata camData = this->camera.getMetadata();
 	Uint32 camDataIndex = displayWindow.createBuffer(&camData, 1, sizeof(CameraMetadata));
-
 	Uint32 vertexBufferIndex = displayWindow.createBuffer((void*)this->triangles.data(), this->triangles.size(), sizeof(Triangle));
 
 	while (1) {
@@ -23,8 +22,7 @@ void Engine::run() {
 			break;
 		}
 		camera.updateMovementBools(event);
-		camera.updateCamera();
-		camera.updatePosition(displayWindow.deltaTime);
+		camera.update(displayWindow.deltaTime);
 		camData = camera.getMetadata();
 		displayWindow.updateBuffer(camDataIndex, &camData, 1, sizeof(CameraMetadata));
 		displayWindow.render();

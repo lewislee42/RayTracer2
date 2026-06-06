@@ -13,10 +13,16 @@ Camera::Camera(const int& screenWidth, const int& screenHeight) {
 	this->viewportWidth		= viewportHeight * (float(screenWidth) / screenHeight);
 
 
-	updateCamera();
+	update(0);
 }
 
-void Camera::updateCamera() {
+void Camera::update(const float& deltaTime) {
+	updatePosition(deltaTime);
+	updateDirection(deltaTime);
+	updateCalculation();
+}
+
+void	Camera::updateCalculation() {
 	// Viewport calculation
 	Vec3 w			= unitVector(-direction);
 	Vec3 u			= unitVector(cross(vup, w));
@@ -113,7 +119,6 @@ void Camera::updateMovementBools(const SDL_Event& event) {
 }
 
 void	Camera::updatePosition(const float& deltaTime) {
-	// std::cout << "deltaTime: " << std::to_string(deltaTime) << std::endl;
 	if (movementBools.moveForward == true) {
 		center = center + (direction * moveSpeed * deltaTime);
 		std::cout << "W pressed... center: " << center << std::endl;
@@ -129,5 +134,36 @@ void	Camera::updatePosition(const float& deltaTime) {
 	if (movementBools.moveRight == true) {
 		center = center + (cross(direction, vup) * moveSpeed * deltaTime);
 		std::cout << "D pressed... center: " << center << std::endl;
+	}
+	if (movementBools.moveUpwards == true) {
+		center = center + (vup * moveSpeed * deltaTime);
+		std::cout << "Space pressed... center: " << center << std::endl;
+	}
+	if (movementBools.moveDownwards == true) {
+		center = center + (-vup * moveSpeed * deltaTime);
+		std::cout << "LCtrl pressed... center: " << center << std::endl;
+	}
+}
+
+void	Camera::updateDirection(const float& deltaTime) {
+	if (movementBools.turnLeft == true) {
+		direction = normalize(direction + (cross(direction, (Vec3){0, -1, 0}) * turnSpeed * deltaTime));
+		std::cout << "Left pressed... direction: " << direction << std::endl;
+	}
+	if (movementBools.turnRight == true) {
+		direction = normalize(direction + (cross(direction, (Vec3){0, 1, 0}) * turnSpeed * deltaTime));
+		std::cout << "Right pressed... direction: " << direction << std::endl;
+	}
+	if (movementBools.turnUp == true) {
+		Vec3 right = normalize(cross(direction, vup));
+		float turnAngle = turnSpeed * deltaTime;
+		direction = direction * cos(turnAngle) + cross(right, direction) * sin(turnAngle) + right * dot(right, direction) * (1.0f - cos(turnAngle));
+		std::cout << "Up pressed... direction: " << direction << std::endl;
+	}
+	if (movementBools.turnDown == true) {
+		Vec3 right = normalize(cross(direction, vup));
+		float turnAngle = -1 * turnSpeed * deltaTime;
+		direction = direction * cos(turnAngle) + cross(right, direction) * sin(turnAngle) + right * dot(right, direction) * (1.0f - cos(turnAngle));
+		std::cout << "Down pressed... direction: " << direction << std::endl;
 	}
 }
