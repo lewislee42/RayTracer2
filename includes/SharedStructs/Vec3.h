@@ -112,7 +112,7 @@ public:
 					u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 	}
 
-	inline Vec3 unit_vector(thread const Vec3 v) {
+	inline Vec3 unitVector(thread const Vec3 v) {
 		return v / v.length();
 	}
 # else 
@@ -156,7 +156,7 @@ public:
 					u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 	}
 
-	inline Vec3 unit_vector(const Vec3& v) {
+	inline Vec3 unitVector(const Vec3& v) {
 		return v / v.length();
 	}
 # endif

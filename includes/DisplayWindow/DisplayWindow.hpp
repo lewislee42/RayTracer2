@@ -16,12 +16,12 @@ public:
 	~DisplayWindow();
 
 
-	uint	deltaTime;
+	double	deltaTime;
 	uint	fps = 0;
 
 
 	void	render();
-	bool	shouldClose();
+	bool	shouldClose(const SDL_Event& event);
 
 	Uint32	createBuffer(void* data, size_t elementAmount, size_t elementSize);
 	void	updateBuffer(Uint32 bufferIndex, void* data, size_t elementAmount, size_t elementSize);

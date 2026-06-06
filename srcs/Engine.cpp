@@ -18,9 +18,14 @@ void Engine::run() {
 	Uint32 vertexBufferIndex = displayWindow.createBuffer((void*)this->triangles.data(), this->triangles.size(), sizeof(Triangle));
 
 	while (1) {
-		if (displayWindow.shouldClose()) {
+		SDL_PollEvent(&this->event);
+		if (displayWindow.shouldClose(event)) {
 			break;
 		}
+		camera.updateMovementBools(event);
+		camera.updateCamera();
+		camera.updatePosition(displayWindow.deltaTime);
+		camData = camera.getMetadata();
 		displayWindow.updateBuffer(camDataIndex, &camData, 1, sizeof(CameraMetadata));
 		displayWindow.render();
 	}

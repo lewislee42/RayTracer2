@@ -36,6 +36,7 @@ set(SOURCES
   ./srcs/Engine.cpp
   ./srcs/DisplayWindow/DisplayWindow.cpp
   ./srcs/Camera.cpp
+  ./srcs/Utils.cpp
   ./srcs/Shaders/raytracer.metal
 )
 

@@ -25,4 +25,5 @@ public:
 private:
 	DisplayWindow	displayWindow;
 	Camera			camera;
+	SDL_Event		event;
 };

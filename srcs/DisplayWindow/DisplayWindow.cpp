@@ -98,9 +98,7 @@ void DisplayWindow::render() {
 	// Getting delta time
     std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = endTime - startTime;
-    auto differenceMillisecond = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-    long long millisecondCount = differenceMillisecond.count();
-	deltaTime = millisecondCount / 1000.0f;
+	deltaTime = elapsed.count();
 	
 	// Getting FPS
 	frameCount++;
@@ -193,8 +191,8 @@ void DisplayWindow::blitTexture() {
 }
 
 
-bool DisplayWindow::shouldClose() {
-	SDL_PollEvent(&this->event);
+bool DisplayWindow::shouldClose(const SDL_Event& event) {
+	// SDL_PollEvent(&this->event);
 	if (event.type == SDL_EVENT_KEY_DOWN) {
 		if (event.key.key == SDLK_ESCAPE)
 			return true;

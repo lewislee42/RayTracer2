@@ -8,7 +8,7 @@ struct Ray {
 	Vec3	dir;
 
 	Ray() {}
-	Ray(const point3 origin, const Vec3 direction): origin(origin), dir(unit_vector(direction)) {
+	Ray(const point3 origin, const Vec3 direction): origin(origin), dir(unitVector(direction)) {
 
 	}
 	
