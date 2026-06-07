@@ -34,7 +34,6 @@ add_custom_command(
 set(SOURCES 
   ./srcs/main.cpp
   ./srcs/Engine.cpp
-  ./srcs/DisplayWindow/DisplayWindow.cpp
   ./srcs/Camera.cpp
   ./srcs/Utils.cpp
   ./srcs/Shaders/raytracer.metal
