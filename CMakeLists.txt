@@ -47,9 +47,8 @@ set(IMGUI_SOURCES
   ./libs/imgui/imgui_demo.cpp
   ./libs/imgui/imgui_widgets.cpp
   ./libs/imgui/imgui_tables.cpp
-  ./libs/imgui/backends/imgui_impl_metal.mm
   ./libs/imgui/backends/imgui_impl_sdl3.cpp
-  ./libs/imgui/backends/imgui_impl_sdlrenderer3.cpp
+  ./libs/imgui/backends/imgui_impl_sdlgpu3.cpp
 )
 
 include(FetchContent)
@@ -105,3 +104,6 @@ find_library(METAL_FRAMEWORK Metal REQUIRED)
 find_library(QUARTZ_FRAMEWORK QuartzCore REQUIRED)
 find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
 target_link_libraries(Sim PRIVATE ${METAL_FRAMEWORK} ${QUARTZ_FRAMEWORK} ${APPKIT_FRAMEWORK})
+
+target_compile_options(Sim PUBLIC -fsanitize=address -g -O1)
+target_link_options(Sim PUBLIC -fsanitize=address)

@@ -18,6 +18,7 @@ void Engine::run() {
 
 	while (1) {
 		SDL_PollEvent(&this->event);
+		ImGui_ImplSDL3_ProcessEvent(&this->event);
 		if (displayWindow.shouldClose(event)) {
 			break;
 		}

@@ -1,4 +1,5 @@
 # include "DisplayWindow/DisplayWindow.hpp"
+#include "SDL3/SDL_gpu.h"
 
 
 DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
@@ -37,10 +38,25 @@ DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
 		throw SDLInitializationError();
 	}
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	ImGui::StyleColorsDark();
+	ImGui_ImplSDL3_InitForSDLGPU(window);
+	ImGui_ImplSDLGPU3_InitInfo initInfo = {};
+	initInfo.Device = this->device;
+	initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(this->device, this->window);
+	initInfo.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
+	// initInfo.SwapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;
+	// initInfo.PresentMode = SDL_GPU_PRESENTMODE_VSYNC;
+	ImGui_ImplSDLGPU3_Init(&initInfo);
+
 	/*
 	 *  Compiles shader and loads it as a pipeline
 	 */
 	size_t shaderSize;
+	// Come back to this to make this dynamic
 	void* shaderCode = SDL_LoadFile("/Users/lewislee/Documents/Coding/graphicProjects/blackhole-sim/default.metallib", &shaderSize);
 	if (!shaderCode) {
 		SDL_Log("Failed to load shader: %s", SDL_GetError());
@@ -80,6 +96,12 @@ DisplayWindow::DisplayWindow(int screenWidth, int screenHeight):
 
 
 DisplayWindow::~DisplayWindow() {
+	SDL_WaitForGPUIdle(device);
+    ImGui_ImplSDL3_Shutdown();
+    ImGui_ImplSDLGPU3_Shutdown();
+    ImGui::DestroyContext();
+
+	SDL_ReleaseWindowFromGPUDevice(this->device, window);
 	SDL_DestroyGPUDevice(this->device);
 	SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
@@ -88,12 +110,23 @@ DisplayWindow::~DisplayWindow() {
 
 
 void DisplayWindow::render() {
+	std::cout << "Testing" << std::endl;
+  	ImGui_ImplSDLGPU3_NewFrame();
+	ImGui_ImplSDL3_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("SDL_GPU Texture Test");
+	ImGui::Text("size = %d x %d", screenWidth, screenHeight);
+	ImGui::Text("screen texture pointer: %p", &screenTexture);
+	ImGui::Image((ImTextureID)screenTexture, ImVec2((float)screenWidth, (float)screenHeight));
+	ImGui::End();
+
 
 	// Getting render start time
     std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
 	sendComputeCommand();
-	blitTexture();
+	// blitTexture();
 
 	// Getting delta time
     std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
@@ -103,7 +136,7 @@ void DisplayWindow::render() {
 	// Getting FPS
 	frameCount++;
 	std::chrono::duration<double> frameElapsed = endTime - lastTime;
-	if (frameElapsed.count() == 1.0) {
+	if (frameElapsed.count() >= 1.0) {
         fps = frameCount / frameElapsed.count();
 
         // Reset for the next infinite cycle
@@ -114,6 +147,9 @@ void DisplayWindow::render() {
 
 
 void DisplayWindow::sendComputeCommand() {
+	ImGui::Render();
+	ImDrawData* drawData = ImGui::GetDrawData();
+
 	SDL_GPUCommandBuffer* cmd = SDL_AcquireGPUCommandBuffer(this->device);
 	SDL_GPUStorageTextureReadWriteBinding writeOp = {
 		.texture = this->screenTexture,
@@ -140,10 +176,37 @@ void DisplayWindow::sendComputeCommand() {
 		bufferBinds.size()
 	);
 
-
 	SDL_BindGPUComputePipeline(pass, pipeline);
 	SDL_DispatchGPUCompute(pass, this->screenWidth, this->screenHeight, 1);
 	SDL_EndGPUComputePass(pass);
+
+
+	SDL_GPUTexture *swapchainTexture;
+	SDL_WaitAndAcquireGPUSwapchainTexture(cmd, window, &swapchainTexture, nullptr, nullptr); // Acquire a swapchain texture
+
+
+	if (swapchainTexture != nullptr) {
+
+		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, cmd);
+		// Setup and start a render pass
+		SDL_GPUColorTargetInfo targetInfo = {};
+		targetInfo.texture = swapchainTexture;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		targetInfo.clear_color = SDL_FColor { clear_color.x, clear_color.y, clear_color.z, clear_color.w };
+		targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+		targetInfo.store_op = SDL_GPU_STOREOP_STORE;
+		targetInfo.mip_level = 0;
+		targetInfo.layer_or_depth_plane = 0;
+		targetInfo.cycle = false;
+		SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmd, &targetInfo, 1, nullptr);
+
+		// Render ImGui
+		ImGui_ImplSDLGPU3_RenderDrawData(drawData, cmd, renderPass);
+
+		SDL_EndGPURenderPass(renderPass);
+	}
+
+
 	SDL_SubmitGPUCommandBuffer(cmd);
 }
 

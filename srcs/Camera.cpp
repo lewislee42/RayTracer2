@@ -147,11 +147,11 @@ void	Camera::updatePosition(const float& deltaTime) {
 
 void	Camera::updateDirection(const float& deltaTime) {
 	if (movementBools.turnLeft == true) {
-		direction = normalize(direction + (cross(direction, (Vec3){0, -1, 0}) * turnSpeed * deltaTime));
+		direction = normalize(direction + (cross(direction, -vup) * turnSpeed * deltaTime));
 		std::cout << "Left pressed... direction: " << direction << std::endl;
 	}
 	if (movementBools.turnRight == true) {
-		direction = normalize(direction + (cross(direction, (Vec3){0, 1, 0}) * turnSpeed * deltaTime));
+		direction = normalize(direction + (cross(direction, vup) * turnSpeed * deltaTime));
 		std::cout << "Right pressed... direction: " << direction << std::endl;
 	}
 	if (movementBools.turnUp == true) {
